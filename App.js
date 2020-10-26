@@ -26,12 +26,31 @@ export default class App extends React.Component {
     dataRetrieved: []
   };
 
+  reformatArray = values => {
+    let firstIndex = values[0];
+    let reformattedJson = firstIndex.replace(/\\/, '');
+  //  var newarray = [];
+    //newarray = reformattedJson;
+    console.log("arrayFormat");
+    console.log(reformattedJson);
+  };
+
+  makeState = data => {
+    this.setState({dataRetrieved: data});
+    const values = Object.values(this.state.dataRetrieved);
+    console.log("Dette er værdierne fra statevariablen");
+    console.log(values);
+    this.reformatArray(values);
+  };
+
   componentDidMount() {
     fetch('http://13.69.31.213/wh/getall')
         .then(response => response.json() )
-        .then(data => this.setState({dataRetrieved: data})  )
+        .then(data => this.makeState(data)  )
         .catch(error => console.log(error));
   }
+
+
 /*
   retrieveData = () =>{
     fetch('http://13.69.31.213/wh/getall')
