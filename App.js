@@ -19,8 +19,8 @@ componentDidMount() {
 }
 //Fetch data metode:
 //Først bruges fetch metoden til at hente data
-//Vi parser først resultatet af fetchen til et json dataobjekter
-  //Derefter hentes værdierne fra objektet. Disse smides ind i et array
+//Vi parser først resultatet af fetchen
+  //Derefter hentes værdierne fra objekterne. Disse smides ind i et array - "values"
     fetchData = async() =>{
       let response = await fetch('http://13.69.31.213/wh/getall');
       let result = await response.json();
@@ -28,24 +28,25 @@ componentDidMount() {
       const values = Object.values(entries);
       var arr =[];
       var arrayOfMeta=[];
+
       //Her looper vi igennem array'et og smider alle objekter, som har product_name = wehlers -
       // ind i et nyt array for at sortere green cotton fra wehlers
-
+      //Vi laver uppercase for at ignore eventuelle. problemer med små og store bogstaver
       values.map((item, index) => {
         if (item.Record.product_brand.toUpperCase() === "WHELERS" || item.Record.product_brand.toUpperCase() === "WEHLERS"){
           arr.push(item)
         }
       });
-      //Her tager vi fat i den attribut, som hedder meta data
-      //Først parses denne til json objekter
+      //Her tager vi fat i den attribut, som hedder metadata
+      //Først parses denne - ligesom tidligere
       //Derefter laver vi en variabel som indeholder hvert meta objekt og sætter dette ind i et array
-      //Som kun er dedikeret til metad data informationer
+      //Som kun er dedikeret til metadata-informationer
       arr.map((item, index) => {
         item.Record.metadata = JSON.parse(item.Record.metadata);
         var meta = (item.Record.metadata[0]);
         arrayOfMeta.push(meta);
       });
-      //Slutteligt sætte to state arrays til værdierne af vores filtrering
+      //Slutteligt sættes to state arrays til værdierne af vores filtrering
       this.setState({arrayTest: arr});
       this.setState({arrayOfMeta: arrayOfMeta});
     };
@@ -59,7 +60,7 @@ componentDidMount() {
       )
     }
   else{
-    //Ellers printr vi data fra de to arrays
+    //Ellers printer vi data fra de to arrays ved brug af map
       return (
      <View style={styles.container} >
       <View>
