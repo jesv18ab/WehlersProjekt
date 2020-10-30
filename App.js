@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import * as firebase from 'firebase';
 
+let array = null;
 
 const fireBaseConfig = {
   apiKey: "AIzaSyAhRw12K9lOP1p72bY_Pqpol5VjohVULAM",
@@ -21,68 +22,78 @@ if (!firebase.apps.length) {
 }
 
 
+
 export default class App extends React.Component {
   state = {
-    dataRetrieved: []
+arrayTest: null,
+arrayOfMeta: null
   };
 
-  reformatArray = values => {
-    let firstIndex = values[0];
-    let reformattedJson = firstIndex.replace(/\\/, '');
-  //  var newarray = [];
-    //newarray = reformattedJson;
-    console.log("arrayFormat");
-    console.log(reformattedJson);
-  };
+
+componentDidMount() {
+  this.fetchData();
+
+
+//  var entries = JSON.parse(result.response);
+ // console.log(entries);
+}
 
   makeState = data => {
     this.setState({dataRetrieved: data});
     const values = Object.values(this.state.dataRetrieved);
-    console.log("Dette er værdierne fra statevariablen");
-    console.log(values);
-    this.reformatArray(values);
+    //this.reformatArray(values);
   };
 
-  componentDidMount() {
-    fetch('http://13.69.31.213/wh/getall')
-        .then(response => response.json() )
-        .then(data => this.makeState(data)  )
-        .catch(error => console.log(error));
-  }
 
+    fetchData = async() =>{
+      let response = await fetch('http://13.69.31.213/wh/getall');
+      let result = await response.json();
+      var entries = JSON.parse(result.response);
+      const values = Object.values(entries);
+      var arr =[];
+      var arrayOfMeta=[];
 
-/*
-  retrieveData = () =>{
-    fetch('http://13.69.31.213/wh/getall')
-          .then(response => console.log(JSON.parse(response)) )
-          .then(data => this.setState({dataRetrieved: data})  )
-          .catch(error => console.log(error));
-  };*/
+      values.map((item, index) => {
+        if (item.Record.product_brand === "Whelers" || item.Record.product_brand === "Wehlers"){
+          arr.push(item)
+        }
+      });
+      arr.map((item, index) => {
+        item.Record.metadata = JSON.parse(item.Record.metadata);
+        var meta = (item.Record.metadata[0]);
+        arrayOfMeta.push(meta);
+      });
 
-  /*sendData = () => {
-    const list = this.state.dataRetrieved;
-    firebase.database().ref(`/Wehlers/`).push({list});
-  };*/
+      console.log("Dette er meta");
+      console.log(arrayOfMeta[1].event_name);
+      this.setState({arrayTest: arr});
+      this.setState({arrayOfMeta: arrayOfMeta});
+    };
+
 
   render(){
-    const values =Object.values(this.state.dataRetrieved);
-    const keys = Object.keys(this.state.dataRetrieved);
-   // console.log("Dette er data");
-    //console.log(keys);
-  return (
-     <View>
-      <View style={[styles.itemList, {marginLeft: '10%'}]}>
-        {values.map((item, index) => (
-            <TouchableOpacity data="test" style={{marginLeft: '20%'}}
-                              key={index}
-                              style={styles.listItem}>
-              <Text style={{fontSize: 16}}>{index}</Text>
-            </TouchableOpacity>
-        ))
-        }
+    if(this.state.arrayTest === null ||this.state.arrayOfMeta === null){
+      return (
+          <View></View>
+      )
+    }
+  else{
+      return (
+     <View style={styles.container} >
+      <View>
+        <Text>Dette er hele objektet</Text>
+        {this.state.arrayTest.map((item, key) => (
+           <View style={styles.listItem} key={key}>
+            <Text>{item.Key}</Text>
+            <Text>{item.Record.product_designer}</Text>
+            <Text>{this.state.arrayOfMeta[key].event_name}</Text>
+             </View>
+        ))}
       </View>
+
      </View>
   );
+    }
   }
 }
 
