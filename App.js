@@ -1,9 +1,7 @@
 
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
 let array = null;
-
-
 
 
 export default class App extends React.Component {
@@ -28,7 +26,7 @@ componentDidMount() {
       const values = Object.values(entries);
       var arr =[];
       var arrayOfMeta=[];
-
+      console.log(values)
       //Her looper vi igennem array'et og smider alle objekter, som har product_name = wehlers -
       // ind i et nyt array for at sortere green cotton fra wehlers
       //Vi laver uppercase for at ignore eventuelle. problemer med små og store bogstaver
@@ -62,18 +60,23 @@ componentDidMount() {
   else{
     //Ellers printer vi data fra de to arrays ved brug af map
       return (
-     <View style={styles.container} >
-      <View>
-        <Text>Dette er hele objektet</Text>
+     <View style={styles.container}>
+       <Text style={{marginTop: 50}}>Dette er hele objektet</Text>
+       <ScrollView style={styles.scrollView}>
         {this.state.arrayTest.map((item, key) => (
            <View style={styles.listItem} key={key}>
             <Text>{item.Key}</Text>
             <Text>{item.Record.product_designer}</Text>
-            <Text>{this.state.arrayOfMeta[key].event_name}</Text>
              </View>
         ))}
-      </View>
-
+         {this.state.arrayOfMeta.map((item, key) => (
+             <View style={styles.listItem} key={key}>
+               <Text>Meta</Text>
+               <Text>{item.Key}</Text>
+               <Text>{item.event_name}</Text>
+             </View>
+         ))}
+      </ScrollView>
      </View>
   );
     }
@@ -99,5 +102,9 @@ const styles = StyleSheet.create({
   itemList: {
     marginTop: 20,
     width: '80%',
+  },
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 20,
   },
 });
